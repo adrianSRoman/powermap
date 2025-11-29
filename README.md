@@ -96,6 +96,100 @@ analyzer = PowermapFOA(
     grid_resolution=2
 )
 
+## Processing FOA Recordings
+
+The `process_foa_recording.py` script provides a complete solution for analyzing FOA audio files and generating visualizations.
+
+### Basic Usage
+
+```bash
+# Process a recording with default settings (MUSIC mode, 24kHz)
+python process_foa_recording.py recording.wav
+
+# Specify analysis mode and output file
+python process_foa_recording.py recording.wav --mode MVDR --output result.png
+
+# Process with custom parameters
+python process_foa_recording.py recording.wav --frame-size 2048 --grid-res 5 --sources 2
+```
+
+### Creating Animations
+
+```bash
+# Generate animated powermap video
+python process_foa_recording.py recording.wav --animate --anim-output powermap.mp4
+
+# Control animation frame rate
+python process_foa_recording.py recording.wav --animate --fps 20
+```
+
+### Temporal Analysis
+
+```bash
+# Generate temporal evolution plot
+python process_foa_recording.py recording.wav --temporal --temporal-output timeline.png
+
+# Process specific time segment
+python process_foa_recording.py recording.wav --start 10.0 --duration 5.0
+```
+
+### Command-Line Options
+
+**Required:**
+- `input` - Input FOA audio file (must be 4 channels)
+
+**Processing Parameters:**
+- `--sample-rate` - Target sample rate in Hz (default: 24000)
+- `--frame-size` - Analysis frame size in samples (default: 1024)
+- `--hop-size` - STFT hop size in samples (default: 128)
+- `--grid-res` - Spherical grid resolution, 1-9 (default: 3)
+
+**Algorithm Parameters:**
+- `--mode` - Analysis mode: PWD, MVDR, MUSIC, MUSIC_LOG, MINNORM, MINNORM_LOG (default: MUSIC)
+- `--sources` - Expected number of sources (default: 1)
+- `--smoothing` - Temporal smoothing coefficient 0-1 (default: 0.25)
+- `--threshold` - Signal power threshold for silence detection (default: 1e-6)
+
+**Output Options:**
+- `--output` - Output image file for static powermap
+- `--temporal` - Generate temporal evolution plot
+- `--temporal-output` - Output file for temporal plot
+- `--animate` - Create animated powermap video (requires FFmpeg)
+- `--anim-output` - Output video file for animation
+- `--fps` - Animation frames per second (default: 10)
+
+**Time Selection:**
+- `--start` - Start time in seconds (default: 0.0)
+- `--duration` - Duration to process in seconds (default: entire file)
+
+### Requirements for Animation
+
+To create animated videos, you need FFmpeg installed:
+
+```bash
+# macOS
+brew install ffmpeg
+
+# Ubuntu/Debian
+sudo apt-get install ffmpeg
+
+# Windows
+# Download from https://ffmpeg.org/download.html
+```
+
+### Output Files
+
+The script generates:
+1. **Static powermap** - Time-averaged spatial distribution (PNG)
+2. **Temporal plot** - Evolution over time + averaged powermap (PNG, with `--temporal`)
+3. **Animation** - Frame-by-frame powermap video (MP4, with `--animate`)
+
+All visualizations include:
+- 2D powermap with azimuth (-180° to 180°) and elevation (-90° to 90°)
+- Cardinal direction markers (Front, Back, Left, Right)
+- Horizontal plane slices for easy interpretation
+- Color-coded intensity (hot colormap)
+
 # Configure
 analyzer.mode = PowermapMode.MUSIC
 analyzer.n_sources = 1
