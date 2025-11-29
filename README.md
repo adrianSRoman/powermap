@@ -96,6 +96,30 @@ analyzer = PowermapFOA(
     grid_resolution=2
 )
 
+# Configure
+analyzer.mode = PowermapMode.MUSIC
+analyzer.n_sources = 1
+analyzer.pmap_avg_coeff = 0.25
+analyzer.set_power_threshold(1e-6)  # Set silence threshold
+
+# Process FOA audio (4 channels: W, Y, Z, X in ACN ordering)
+# Shape: (4, frame_size)
+foa_audio = np.random.randn(4, 1024) * 0.1
+analyzer.process_frame(foa_audio)
+
+# Get results
+grid_directions, powermap = analyzer.get_powermap(normalize=True)
+
+# Check if signal was detected
+if analyzer.get_current_power() > analyzer.power_threshold:
+    # Find peak direction
+    peak_idx = np.argmax(powermap)
+    azimuth, elevation = grid_directions[peak_idx]
+    print(f"Peak at: azimuth={azimuth:.1f}°, elevation={elevation:.1f}°")
+else:
+    print("Silence detected - no source localization")
+```
+
 ## Processing FOA Recordings
 
 The `process_foa_recording.py` script provides a complete solution for analyzing FOA audio files and generating visualizations.
@@ -189,30 +213,6 @@ All visualizations include:
 - Cardinal direction markers (Front, Back, Left, Right)
 - Horizontal plane slices for easy interpretation
 - Color-coded intensity (hot colormap)
-
-# Configure
-analyzer.mode = PowermapMode.MUSIC
-analyzer.n_sources = 1
-analyzer.pmap_avg_coeff = 0.25
-analyzer.set_power_threshold(1e-6)  # Set silence threshold
-
-# Process FOA audio (4 channels: W, Y, Z, X in ACN ordering)
-# Shape: (4, frame_size)
-foa_audio = np.random.randn(4, 1024) * 0.1
-analyzer.process_frame(foa_audio)
-
-# Get results
-grid_directions, powermap = analyzer.get_powermap(normalize=True)
-
-# Check if signal was detected
-if analyzer.get_current_power() > analyzer.power_threshold:
-    # Find peak direction
-    peak_idx = np.argmax(powermap)
-    azimuth, elevation = grid_directions[peak_idx]
-    print(f"Peak at: azimuth={azimuth:.1f}°, elevation={elevation:.1f}°")
-else:
-    print("Silence detected - no source localization")
-```
 
 ## Usage Examples
 
