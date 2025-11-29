@@ -24,17 +24,6 @@ In Proceedings of the 20th International Conference on Digital Audio Effects (DA
 
 ## Features
 
-### Silence Detection and Thresholding (New!)
-
-The implementation now includes **automatic silence detection** to prevent spurious artifacts during quiet portions of recordings:
-
-- **Power thresholding**: Automatically suppresses powermap when signal energy is below threshold
-- **No 45° artifacts**: Prevents numerical instabilities from creating phantom sources during silence
-- **Clean visualizations**: Maps go fully dark when there's no signal
-- **Configurable threshold**: Adjust sensitivity based on recording conditions
-
-See [SILENCE_DETECTION.md](SILENCE_DETECTION.md) for detailed information.
-
 ### Powermap Modes
 
 1. **PWD** (Plane Wave Decomposition)
